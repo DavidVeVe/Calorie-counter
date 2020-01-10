@@ -37,7 +37,7 @@ const tagAttributes = obj => (content = "") => {
 //   } else {
 //     return tagAttributes(t);
 //   }
-// };
+// };/
 
 const tag = t =>
   typeof t === "string" ? tagAttributes({ tag: t }) : tagAttributes(t);
