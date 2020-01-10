@@ -1,5 +1,5 @@
-// const compose = (...functions) => data =>
-//   functions.reduceRight((value, func) => func(value), data);
+const compose = (...functions) => data =>
+  functions.reduceRight((value, func) => func(value), data);
 
 // {
 //   tag: 'h1',
@@ -21,9 +21,24 @@ const attrsToString = (obj = {}) => {
   return string;
 };
 
-const tag = t => content => `<${t}>${content}</${t}>`;
+const tagAttributes = obj => (content = "") => {
+  return `<${obj.tag}${obj.attrs ? " " : ""}${attrsToString(obj.attrs)}>${content}</${obj.tag}>`; //prettier-ignore
+};
 
-console.log;
+const tag = t => {
+  if (typeof t === "string") {
+    return tagAttributes({ tag: t });
+  } else {
+    return tagAttributes(t);
+  }
+};
+
+const tableRowTag = tag("tr");
+// const tableRow = items => tableRowTag(tableCells(items));
+const tableRow = items => compose(tableRowTag, tableCells)(items);
+
+const tableCell = tag("td");
+const tableCells = items => items.map(tableCell).join("");
 
 let description = $("#description");
 let carbs = $("#carbs");
@@ -50,8 +65,8 @@ protein.keypress(() => {
 
 const validateInputs = () => {
   description.val() ? "" : description.addClass("is-invalid");
-  carbs.val() ? "" : carbs.addClass("is-invalid");
   calories.val() ? "" : calories.addClass("is-invalid");
+  carbs.val() ? "" : carbs.addClass("is-invalid");
   protein.val() ? "" : protein.addClass("is-invalid");
 
   if (description.val() && carbs.val() && calories.val() && protein.val()) {
@@ -62,19 +77,47 @@ const validateInputs = () => {
 const add = () => {
   const newItem = {
     description: description.val(),
-    carbs: parseInt(carbs.val()),
     calories: parseInt(calories.val()),
+    carbs: parseInt(carbs.val()),
     protein: parseInt(protein.val())
   };
 
   list.push(newItem);
-  clearInputs();
   console.log(list);
+  updateTotals();
+  clearInputs();
+  renderItems();
+};
+
+const updateTotals = () => {
+  let calories = 0,
+    carbs = 0,
+    protein = 0;
+
+  list.map(item => {
+    (calories += item.calories),
+      (carbs += item.carbs),
+      (protein += item.protein);
+  });
+
+  $("#totalCalories").text(calories);
+  $("#totalCarbs").text(carbs);
+  $("#totalProtein").text(protein);
 };
 
 const clearInputs = () => {
   description.val("");
-  carbs.val("");
   calories.val("");
+  carbs.val("");
   protein.val("");
+};
+
+const renderItems = () => {
+  $("tbody").empty();
+
+  list.map(item => {
+    $("tbody").append(
+      tableRow([item.description, item.calories, item.carbs, item.protein])
+    );
+  });
 };
