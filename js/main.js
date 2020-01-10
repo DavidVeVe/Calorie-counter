@@ -1,5 +1,5 @@
-const compose = (...functions) => data =>
-  functions.reduceRight((value, func) => func(value), data);
+// const compose = (...functions) => data =>
+//   functions.reduceRight((value, func) => func(value), data);
 
 let description = $("#description");
 let carbs = $("#carbs");
