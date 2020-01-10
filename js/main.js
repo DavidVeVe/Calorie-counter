@@ -8,30 +8,39 @@ const compose = (...functions) => data =>
 //   }
 // }
 
+// const attrsToString = (obj = {}) => {
+//   const keys = Object.keys(obj);
+//   const attrs = [];
+
+//   for (let i = 0; i < keys.length; i++) {
+//     let attr = keys[i];
+//     attrs.push(`${attr}='${obj[attr]}'`);
+//   }
+
+//   const string = attrs.join("");
+//   return string;
+// };
+
 const attrsToString = (obj = {}) => {
-  const keys = Object.keys(obj);
-  const attrs = [];
-
-  for (let i = 0; i < keys.length; i++) {
-    let attr = keys[i];
-    attrs.push(`${attr}='${obj[attr]}'`);
-  }
-
-  const string = attrs.join("");
-  return string;
+  return Object.keys(obj)
+    .map(attr => `${attr}='${obj[attr]}'`)
+    .join("");
 };
 
 const tagAttributes = obj => (content = "") => {
   return `<${obj.tag}${obj.attrs ? " " : ""}${attrsToString(obj.attrs)}>${content}</${obj.tag}>`; //prettier-ignore
 };
 
-const tag = t => {
-  if (typeof t === "string") {
-    return tagAttributes({ tag: t });
-  } else {
-    return tagAttributes(t);
-  }
-};
+// const tag = t => {
+//   if (typeof t === "string") {
+//     return tagAttributes({ tag: t });
+//   } else {
+//     return tagAttributes(t);
+//   }
+// };
+
+const tag = t =>
+  typeof t === "string" ? tagAttributes({ tag: t }) : tagAttributes(t);
 
 const tableRowTag = tag("tr");
 // const tableRow = items => tableRowTag(tableCells(items));
